@@ -2,6 +2,8 @@
 
 This is a quality of life mod that allows you to climb ascension levels faster!
 
-By default it is set to climb 5 ascension levels after a win. This value can be changed in the settings.
+With this mod you can change how many ascension levels you climb after a win. This value needs to be set in the mod settings. For example if you set 5, and you win a run on ascension 10, you will unlock ascension 15 straight away.
 
-It works with base game characters as well as all modded characters.
+Additionally this mod lets you set the maximum unlocked ascension level for all characters or for a specified character. 
+
+This mod works with all base game characters as well as all modded characters.

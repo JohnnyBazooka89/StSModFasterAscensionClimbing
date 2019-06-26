@@ -1,8 +1,9 @@
 {
-  "todo": {
+  "Settings": {
     "TEXT": [
-      "Unhardcode strings!",
-      "Someday :thonking:"
+      "Amount of \nascensions \nclimbed on win:",
+      "All characters",
+      "Set maximum \nascension \nlevel to:"
     ]
   }
 }

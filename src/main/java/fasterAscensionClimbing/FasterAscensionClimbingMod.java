@@ -1,15 +1,19 @@
 package fasterAscensionClimbing;
 
-import basemod.BaseMod;
-import basemod.ModPanel;
-import basemod.ModSlider;
+import basemod.*;
 import basemod.interfaces.*;
 import com.badlogic.gdx.graphics.Texture;
 import com.evacipated.cardcrawl.modthespire.lib.SpireInitializer;
+import com.megacrit.cardcrawl.characters.AbstractPlayer;
+import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.helpers.ImageMaster;
 import com.megacrit.cardcrawl.helpers.Prefs;
 import com.megacrit.cardcrawl.helpers.SaveHelper;
 import com.megacrit.cardcrawl.localization.*;
+import com.megacrit.cardcrawl.screens.options.DropdownMenu;
+import com.megacrit.cardcrawl.screens.stats.CharStat;
+import fasterAscensionClimbing.uielements.ImageButton;
+import fasterAscensionClimbing.uielements.SelectCharacterPagination;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -19,6 +23,7 @@ import java.util.List;
 @SpireInitializer
 public class FasterAscensionClimbingMod implements PostInitializeSubscriber, EditStringsSubscriber {
 
+    //Logger
     public static final Logger logger = LogManager.getLogger(FasterAscensionClimbingMod.class.getName());
 
     //Mod metadata
@@ -31,13 +36,19 @@ public class FasterAscensionClimbingMod implements PostInitializeSubscriber, Edi
 
     //Localization strings
     private static final String UI_STRINGS_PATH = "fasterAscensionClimbing/localization/UIStrings.json";
+
+    //Mod constants
     public static final String ASCENSION_CLIMBING_VALUE_PREF_KEY = "ascensionClimbingValue";
-    public static final int ASCENSION_CLIMBING_DEFAULT_VALUE = 5;
+    public static final int ASCENSION_CLIMBING_DEFAULT_VALUE = 1;
 
-    public static ModSlider slider;
-
+    //Mod prefs
     private static Prefs modPrefs;
-    private static List<Runnable> onSelectionChanged = new ArrayList<>();
+
+    //UI elements in mod settings
+    public static ModSlider amountOfAscensionsClimbedOnWinSlider;
+    public static ModSlider setAscensionsSlider;
+    public static SelectCharacterPagination selectCharacterPagination;
+    public static int setAscensionsValue = 20;
 
     public FasterAscensionClimbingMod() {
         BaseMod.subscribe(this);
@@ -64,18 +75,74 @@ public class FasterAscensionClimbingMod implements PostInitializeSubscriber, Edi
         Texture badgeTexture = ImageMaster.loadImage(BADGE_IMG);
         ModPanel settingsPanel = new ModPanel();
 
-        slider = new ModSlider("Amount of \nascensions \nclimbed on win", 525.0f, 725.0f, 19.0f, "", settingsPanel, (me) -> {
+        UIStrings uiSettingsStrings = CardCrawlGame.languagePack.getUIString("Settings");
+
+        amountOfAscensionsClimbedOnWinSlider = new ModSlider(uiSettingsStrings.TEXT[0], 525.0f, 725.0f, 19.0f, "", settingsPanel, (me) -> {
             int valueToSave = 1 + Math.round((me.value * me.multiplier));
             modPrefs.putInteger(ASCENSION_CLIMBING_VALUE_PREF_KEY, valueToSave);
             modPrefs.flush();
         });
 
-        slider.setValue((getAscensionClimbingValue() - 1.0f) / 19.0f);
+        amountOfAscensionsClimbedOnWinSlider.setValue((getAscensionClimbingValue() - 1.0f) / 19.0f);
 
-        settingsPanel.addUIElement(slider);
+        List<ModLabel> charactersLabels = new ArrayList<>();
+        addCharacterLabel(charactersLabels, settingsPanel, uiSettingsStrings.TEXT[1]);
+
+        for (AbstractPlayer character : CardCrawlGame.characterManager.getAllCharacters()) {
+            addCharacterLabel(charactersLabels, settingsPanel, character.getLocalizedCharacterName());
+        }
+
+        selectCharacterPagination = new SelectCharacterPagination(
+                new ImageButton("fasterAscensionClimbing/img/RightArrow.png", 750, 585, b -> {
+                }),
+                new ImageButton("fasterAscensionClimbing/img/LeftArrow.png", 375, 585, b -> {
+                }),
+                charactersLabels);
+
+        setAscensionsSlider = new ModSlider(uiSettingsStrings.TEXT[2], 950.0f, 600, 19.0f, "", settingsPanel, (me) -> {
+            setAscensionsValue = 1 + Math.round((me.value * me.multiplier));
+        });
+
+        setAscensionsSlider.setValue(1);
+
+        ModButton modButton = new ModButton(1250.0f, 535, settingsPanel, (me) -> {
+            CardCrawlGame.sound.play("UNLOCK_PING");
+
+            int selectedIndex = selectCharacterPagination.selectedIndex;
+
+            if (selectedIndex == 0) {
+                for (AbstractPlayer character : CardCrawlGame.characterManager.getAllCharacters()) {
+                    setAscensionForCharacter(character);
+                }
+            } else {
+                setAscensionForCharacter(CardCrawlGame.characterManager.getAllCharacters().get(selectedIndex - 1));
+            }
+        });
+
+        settingsPanel.addUIElement(amountOfAscensionsClimbedOnWinSlider);
+        settingsPanel.addUIElement(selectCharacterPagination);
+        settingsPanel.addUIElement(setAscensionsSlider);
+        settingsPanel.addUIElement(modButton);
 
         BaseMod.registerModBadge(badgeTexture, MOD_NAME, AUTHOR, DESCRIPTION, settingsPanel);
 
+    }
+
+    private void setAscensionForCharacter(AbstractPlayer character) {
+        CharStat charStat = character.getCharStat();
+        Prefs pref = (Prefs) ReflectionHacks.getPrivate(charStat, CharStat.class, "pref");
+        if (pref.getInteger("WIN_COUNT", 0) == 0) {
+            ReflectionHacks.setPrivate(charStat, CharStat.class, "numVictory", 1);
+            pref.putInteger("WIN_COUNT", 1);
+        }
+        pref.putInteger("ASCENSION_LEVEL", setAscensionsValue);
+        pref.putInteger("LAST_ASCENSION_LEVEL", setAscensionsValue);
+        pref.flush();
+    }
+
+    private void addCharacterLabel(List<ModLabel> charactersLabels, ModPanel settingsPanel, String label) {
+        charactersLabels.add(new ModLabel(label, 425.0f, 590, settingsPanel, (me) -> {
+        }));
     }
 
     @Override
@@ -88,7 +155,7 @@ public class FasterAscensionClimbingMod implements PostInitializeSubscriber, Edi
         logger.info("Done editing strings");
     }
 
-    public static int getAscensionClimbingValue(){
+    public static int getAscensionClimbingValue() {
         return modPrefs.getInteger(ASCENSION_CLIMBING_VALUE_PREF_KEY, ASCENSION_CLIMBING_DEFAULT_VALUE);
     }
 

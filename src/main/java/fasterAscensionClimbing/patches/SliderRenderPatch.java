@@ -11,7 +11,7 @@ public class SliderRenderPatch {
 
     @SpireInsertPatch(locator = Locator.class, localvars = "renderVal")
     public static void Insert(ModSlider modSlider, SpriteBatch sb, @ByRef String[] renderVal) {
-        if (modSlider == FasterAscensionClimbingMod.slider) {
+        if (modSlider == FasterAscensionClimbingMod.amountOfAscensionsClimbedOnWinSlider || modSlider == FasterAscensionClimbingMod.setAscensionsSlider) {
             renderVal[0] = Integer.toString(Integer.valueOf(renderVal[0]) + 1);
         }
     }
