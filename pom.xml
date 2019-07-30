@@ -76,6 +76,7 @@
                         <configuration>
                             <target>
                                 <copy file="target/FasterAscensionClimbingMod.jar" tofile="${slayTheSpirePath}\mods\FasterAscensionClimbingMod.jar"/>
+                                <copy file="target/FasterAscensionClimbingMod.jar" tofile="${slayTheSpirePath}\FasterAscensionClimbingMod\content\FasterAscensionClimbingMod.jar"/>
                             </target>
                         </configuration>
                         <goals>
