@@ -13,7 +13,7 @@
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <!-- Path where your Slay The Spire is installed -->
+        <!-- Path where your Slay the Spire is installed -->
         <slayTheSpirePath>C:\Program Files (x86)\Steam\steamapps\common\SlayTheSpire</slayTheSpirePath>
     </properties>
 
