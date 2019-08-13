@@ -10,7 +10,6 @@ import com.megacrit.cardcrawl.helpers.ImageMaster;
 import com.megacrit.cardcrawl.helpers.Prefs;
 import com.megacrit.cardcrawl.helpers.SaveHelper;
 import com.megacrit.cardcrawl.localization.*;
-import com.megacrit.cardcrawl.screens.options.DropdownMenu;
 import com.megacrit.cardcrawl.screens.stats.CharStat;
 import fasterAscensionClimbing.uielements.ImageButton;
 import fasterAscensionClimbing.uielements.SelectCharacterPagination;
@@ -77,7 +76,7 @@ public class FasterAscensionClimbingMod implements PostInitializeSubscriber, Edi
 
         UIStrings uiSettingsStrings = CardCrawlGame.languagePack.getUIString("FasterAscensionClimbing:Settings");
 
-        amountOfAscensionsClimbedOnWinSlider = new ModSlider(uiSettingsStrings.TEXT[0], 525.0f, 725.0f, 19.0f, "", settingsPanel, (me) -> {
+        amountOfAscensionsClimbedOnWinSlider = new ModSlider(uiSettingsStrings.TEXT[0], 525.0f, 725.0f, 19.0f, "", settingsPanel, me -> {
             int valueToSave = 1 + Math.round((me.value * me.multiplier));
             modPrefs.putInteger(ASCENSION_CLIMBING_VALUE_PREF_KEY, valueToSave);
             modPrefs.flush();
@@ -102,13 +101,13 @@ public class FasterAscensionClimbingMod implements PostInitializeSubscriber, Edi
                 }),
                 charactersLabels);
 
-        setAscensionsSlider = new ModSlider(uiSettingsStrings.TEXT[3], 975.0f, 600, 19.0f, "", settingsPanel, (me) -> {
-            setAscensionsValue = 1 + Math.round((me.value * me.multiplier));
-        });
+        setAscensionsSlider = new ModSlider(uiSettingsStrings.TEXT[3], 975.0f, 600, 19.0f, "", settingsPanel, me ->
+                setAscensionsValue = 1 + Math.round((me.value * me.multiplier))
+        );
 
         setAscensionsSlider.setValue(1);
 
-        ModButton setAscensionsButton = new ModButton(1275.0f, 535, settingsPanel, (me) -> {
+        ModButton setAscensionsButton = new ModButton(1275.0f, 535, settingsPanel, me -> {
             CardCrawlGame.sound.play("UNLOCK_PING");
 
             int selectedIndex = selectCharacterPagination.selectedIndex;
@@ -148,7 +147,7 @@ public class FasterAscensionClimbingMod implements PostInitializeSubscriber, Edi
     }
 
     private void addCharacterLabel(List<ModLabel> charactersLabels, ModPanel settingsPanel, String label) {
-        charactersLabels.add(new ModLabel(label, 425.0f, 590, settingsPanel, (me) -> {
+        charactersLabels.add(new ModLabel(label, 425.0f, 590, settingsPanel, me -> {
         }));
     }
 
