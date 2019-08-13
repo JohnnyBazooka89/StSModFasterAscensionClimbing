@@ -75,7 +75,7 @@ public class FasterAscensionClimbingMod implements PostInitializeSubscriber, Edi
         Texture badgeTexture = ImageMaster.loadImage(BADGE_IMG);
         ModPanel settingsPanel = new ModPanel();
 
-        UIStrings uiSettingsStrings = CardCrawlGame.languagePack.getUIString("Settings");
+        UIStrings uiSettingsStrings = CardCrawlGame.languagePack.getUIString("FasterAscensionClimbing:Settings");
 
         amountOfAscensionsClimbedOnWinSlider = new ModSlider(uiSettingsStrings.TEXT[0], 525.0f, 725.0f, 19.0f, "", settingsPanel, (me) -> {
             int valueToSave = 1 + Math.round((me.value * me.multiplier));
@@ -87,42 +87,49 @@ public class FasterAscensionClimbingMod implements PostInitializeSubscriber, Edi
 
         List<ModLabel> charactersLabels = new ArrayList<>();
         addCharacterLabel(charactersLabels, settingsPanel, uiSettingsStrings.TEXT[1]);
+        addCharacterLabel(charactersLabels, settingsPanel, uiSettingsStrings.TEXT[2]);
 
-        for (AbstractPlayer character : CardCrawlGame.characterManager.getAllCharacters()) {
+        ArrayList<AbstractPlayer> allCharacters = CardCrawlGame.characterManager.getAllCharacters();
+
+        for (AbstractPlayer character : allCharacters) {
             addCharacterLabel(charactersLabels, settingsPanel, character.getLocalizedCharacterName());
         }
 
         selectCharacterPagination = new SelectCharacterPagination(
-                new ImageButton("fasterAscensionClimbing/img/RightArrow.png", 750, 585, b -> {
+                new ImageButton("fasterAscensionClimbing/img/RightArrow.png", 775, 585, b -> {
                 }),
                 new ImageButton("fasterAscensionClimbing/img/LeftArrow.png", 375, 585, b -> {
                 }),
                 charactersLabels);
 
-        setAscensionsSlider = new ModSlider(uiSettingsStrings.TEXT[2], 950.0f, 600, 19.0f, "", settingsPanel, (me) -> {
+        setAscensionsSlider = new ModSlider(uiSettingsStrings.TEXT[3], 975.0f, 600, 19.0f, "", settingsPanel, (me) -> {
             setAscensionsValue = 1 + Math.round((me.value * me.multiplier));
         });
 
         setAscensionsSlider.setValue(1);
 
-        ModButton modButton = new ModButton(1250.0f, 535, settingsPanel, (me) -> {
+        ModButton setAscensionsButton = new ModButton(1275.0f, 535, settingsPanel, (me) -> {
             CardCrawlGame.sound.play("UNLOCK_PING");
 
             int selectedIndex = selectCharacterPagination.selectedIndex;
 
             if (selectedIndex == 0) {
-                for (AbstractPlayer character : CardCrawlGame.characterManager.getAllCharacters()) {
+                for (AbstractPlayer character : allCharacters) {
+                    setAscensionForCharacter(character);
+                }
+            } else if (selectedIndex == 1) {
+                for (AbstractPlayer character : allCharacters.subList(3, allCharacters.size())) {
                     setAscensionForCharacter(character);
                 }
             } else {
-                setAscensionForCharacter(CardCrawlGame.characterManager.getAllCharacters().get(selectedIndex - 1));
+                setAscensionForCharacter(allCharacters.get(selectedIndex - 2));
             }
         });
 
         settingsPanel.addUIElement(amountOfAscensionsClimbedOnWinSlider);
         settingsPanel.addUIElement(selectCharacterPagination);
         settingsPanel.addUIElement(setAscensionsSlider);
-        settingsPanel.addUIElement(modButton);
+        settingsPanel.addUIElement(setAscensionsButton);
 
         BaseMod.registerModBadge(badgeTexture, MOD_NAME, AUTHOR, DESCRIPTION, settingsPanel);
 

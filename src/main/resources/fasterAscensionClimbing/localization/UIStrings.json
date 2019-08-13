@@ -1,8 +1,9 @@
 {
-  "Settings": {
+  "FasterAscensionClimbing:Settings": {
     "TEXT": [
       "Amount of \nascensions \nclimbed on win:",
       "All characters",
+      "All modded characters",
       "Set maximum \nascension \nlevel to:"
     ]
   }
