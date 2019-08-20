@@ -1,7 +1,8 @@
 package fasterAscensionClimbing;
 
 import basemod.*;
-import basemod.interfaces.*;
+import basemod.interfaces.EditStringsSubscriber;
+import basemod.interfaces.PostInitializeSubscriber;
 import com.badlogic.gdx.graphics.Texture;
 import com.evacipated.cardcrawl.modthespire.lib.SpireInitializer;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
@@ -9,7 +10,7 @@ import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.helpers.ImageMaster;
 import com.megacrit.cardcrawl.helpers.Prefs;
 import com.megacrit.cardcrawl.helpers.SaveHelper;
-import com.megacrit.cardcrawl.localization.*;
+import com.megacrit.cardcrawl.localization.UIStrings;
 import com.megacrit.cardcrawl.screens.stats.CharStat;
 import fasterAscensionClimbing.uielements.ImageButton;
 import fasterAscensionClimbing.uielements.SelectCharacterPagination;
@@ -43,6 +44,9 @@ public class FasterAscensionClimbingMod implements PostInitializeSubscriber, Edi
     //Mod prefs
     private static Prefs modPrefs;
 
+    //Settings
+    public static final String UI_SETTINGS_ID = "fasterAscensionClimbing:Settings";
+
     //UI elements in mod settings
     public static ModSlider amountOfAscensionsClimbedOnWinSlider;
     public static ModSlider setAscensionsSlider;
@@ -74,7 +78,7 @@ public class FasterAscensionClimbingMod implements PostInitializeSubscriber, Edi
         Texture badgeTexture = ImageMaster.loadImage(BADGE_IMG);
         ModPanel settingsPanel = new ModPanel();
 
-        UIStrings uiSettingsStrings = CardCrawlGame.languagePack.getUIString("FasterAscensionClimbing:Settings");
+        UIStrings uiSettingsStrings = CardCrawlGame.languagePack.getUIString(UI_SETTINGS_ID);
 
         amountOfAscensionsClimbedOnWinSlider = new ModSlider(uiSettingsStrings.TEXT[0], 525.0f, 725.0f, 19.0f, "", settingsPanel, me -> {
             int valueToSave = 1 + Math.round((me.value * me.multiplier));
