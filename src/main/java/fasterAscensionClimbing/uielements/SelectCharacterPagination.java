@@ -13,8 +13,18 @@ public class SelectCharacterPagination implements IUIElement {
 
     public SelectCharacterPagination(final ImageButton next, final ImageButton prior, final List<ModLabel> elements) {
         this.selectedIndex = 0;
-        next.click = (b -> ++this.selectedIndex);
-        prior.click = (b -> --this.selectedIndex);
+        next.click = b -> {
+            this.selectedIndex++;
+            if (this.selectedIndex >= this.elements.size()) {
+                this.selectedIndex = 0;
+            }
+        };
+        prior.click = b -> {
+            this.selectedIndex--;
+            if (this.selectedIndex < 0) {
+                this.selectedIndex = this.elements.size() - 1;
+            }
+        };
         this.next = next;
         this.prior = prior;
         this.elements = new ArrayList<>();
@@ -24,27 +34,15 @@ public class SelectCharacterPagination implements IUIElement {
     }
 
     public void render(final SpriteBatch spriteBatch) {
-        if (this.selectedIndex != 0) {
-            this.prior.render(spriteBatch);
-        }
-        if ((this.selectedIndex + 1) < this.elements.size()) {
-            this.next.render(spriteBatch);
-        }
-        for (final ModLabel element : this.elements.subList(this.selectedIndex, Math.min((this.selectedIndex + 1), this.elements.size()))) {
-            element.render(spriteBatch);
-        }
+        this.prior.render(spriteBatch);
+        this.next.render(spriteBatch);
+        this.elements.get(this.selectedIndex).render(spriteBatch);
     }
 
     public void update() {
-        if (this.selectedIndex != 0) {
-            this.prior.update();
-        }
-        if ((this.selectedIndex + 1) < this.elements.size()) {
-            this.next.update();
-        }
-        for (final ModLabel element : this.elements.subList(this.selectedIndex, Math.min((this.selectedIndex + 1), this.elements.size()))) {
-            element.update();
-        }
+        this.prior.update();
+        this.next.update();
+        this.elements.get(this.selectedIndex).update();
     }
 
     public int renderLayer() {
