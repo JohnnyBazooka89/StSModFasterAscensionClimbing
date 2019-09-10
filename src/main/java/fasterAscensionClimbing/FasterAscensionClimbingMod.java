@@ -19,6 +19,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @SpireInitializer
 public class FasterAscensionClimbingMod implements PostInitializeSubscriber, EditStringsSubscriber {
@@ -121,7 +122,8 @@ public class FasterAscensionClimbingMod implements PostInitializeSubscriber, Edi
                     setAscensionForCharacter(character);
                 }
             } else if (selectedIndex == 1) {
-                for (AbstractPlayer character : allCharacters.subList(3, allCharacters.size())) {
+                List<AbstractPlayer> moddedCharacters = allCharacters.stream().filter(character -> !BaseMod.isBaseGameCharacter(character)).collect(Collectors.toList());
+                for (AbstractPlayer character : moddedCharacters) {
                     setAscensionForCharacter(character);
                 }
             } else {
