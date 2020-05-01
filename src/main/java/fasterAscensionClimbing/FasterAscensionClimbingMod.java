@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.evacipated.cardcrawl.modthespire.lib.SpireInitializer;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
+import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.helpers.ImageMaster;
 import com.megacrit.cardcrawl.helpers.Prefs;
 import com.megacrit.cardcrawl.helpers.SaveHelper;
@@ -36,7 +37,7 @@ public class FasterAscensionClimbingMod implements PostInitializeSubscriber, Edi
     private static final String BADGE_IMG = "fasterAscensionClimbing/img/ModBadge.png";
 
     //Localization strings
-    private static final String UI_STRINGS_PATH = "fasterAscensionClimbing/localization/UIStrings.json";
+    private static final String UI_STRINGS_PATH = "fasterAscensionClimbing/localization/%s/UIStrings.json";
 
     //Mod constants
     public static final String ASCENSION_CLIMBING_VALUE_PREF_KEY = "ascensionClimbingValue";
@@ -162,13 +163,22 @@ public class FasterAscensionClimbingMod implements PostInitializeSubscriber, Edi
         logger.info("Begin editing strings");
 
         //UI Strings
-        BaseMod.loadCustomStringsFile(UIStrings.class, UI_STRINGS_PATH);
+        BaseMod.loadCustomStringsFile(UIStrings.class, String.format(UI_STRINGS_PATH, getLanguageFolder()));
 
         logger.info("Done editing strings");
     }
 
     public static int getAscensionClimbingValue() {
         return modPrefs.getInteger(ASCENSION_CLIMBING_VALUE_PREF_KEY, ASCENSION_CLIMBING_DEFAULT_VALUE);
+    }
+
+    public String getLanguageFolder() {
+        switch (Settings.language) {
+            case ZHS:
+                return "zhs";
+            default:
+                return "eng";
+        }
     }
 
 }
